@@ -143,7 +143,11 @@ export function Board(props: BoardProps) {
     if (legalFrom(sq).length > 0) {
       setSelected(sq);
       setDrag({ from: sq, x: bx, y: by, moved: false });
-      (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+      try {
+        (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+      } catch {
+        /* kein aktiver Pointer (z. B. synthetische Events) */
+      }
     } else {
       setSelected(null);
     }
