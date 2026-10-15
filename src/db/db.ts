@@ -156,6 +156,7 @@ export interface Settings {
   showPlayedMove: boolean;
   placementDone: boolean;
   tacticsRating: number;
+  chesscomRating: number;
   tagRatings: Record<string, { r: number; n: number }>;
   weeklyGoal: number;
 }
@@ -170,7 +171,9 @@ export const DEFAULT_SETTINGS: Settings = {
   lichessUser: '',
   showPlayedMove: true,
   placementDone: false,
-  tacticsRating: 800,
+  // Startwert für Chess.com ≈ 450: Lichess-Puzzle-Ratings liegen etwa 150 Punkte höher.
+  tacticsRating: 600,
+  chesscomRating: 450,
   tagRatings: {},
   weeklyGoal: 5,
 };

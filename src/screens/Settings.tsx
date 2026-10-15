@@ -9,7 +9,7 @@ export function SettingsScreen(props: { data: AppData; onClose: () => void; onCh
   const [storage, setStorage] = useState<string | null>(null);
   const [persisted, setPersisted] = useState<boolean | null>(null);
   const [msg, setMsg] = useState<{ bad?: boolean; text: string } | null>(null);
-  const [startRating, setStartRating] = useState('');
+  const [startRating, setStartRating] = useState(String(props.data.settings.chesscomRating || ''));
 
   useEffect(() => {
     navigator.storage?.estimate?.().then((e) => {
@@ -134,18 +134,19 @@ export function SettingsScreen(props: { data: AppData; onClose: () => void; onCh
           </p>
           <div class="field">
             <label for="cr">Chess.com-Rating (optional, als Startwert)</label>
-            <input id="cr" type="number" inputMode="numeric" placeholder="z. B. 900" value={startRating} onInput={(e) => setStartRating((e.currentTarget as HTMLInputElement).value)} />
+            <input id="cr" type="number" inputMode="numeric" placeholder="z. B. 450" value={startRating} onInput={(e) => setStartRating((e.currentTarget as HTMLInputElement).value)} />
           </div>
           <button
             class="btn block"
-            onClick={() =>
+            onClick={() => {
+              if (Number(startRating) > 0) void saveSetting('chesscomRating', Number(startRating));
               props.onStart(
                 buildPlacement(
                   { pool: props.data.pool, progress: props.data.progress, lines: props.data.lines },
-                  Number(startRating) > 0 ? Number(startRating) + 150 : 800,
+                  Number(startRating) > 0 ? Number(startRating) + 150 : 600,
                 ),
-              )
-            }
+              );
+            }}
           >
             Einstufungstest starten
           </button>

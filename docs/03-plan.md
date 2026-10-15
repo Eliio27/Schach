@@ -203,7 +203,10 @@ Elo-Update (K = 40 → 16 nach 30 Aufgaben) gegen das Lichess-Puzzle-Rating, get
 
 ## 6. Inhalt
 
-Dein Chess.com-Rating fehlte in der Antwort (`___`). Damit das nicht blockiert, befülle ich **A, B und C vollständig** (eigene Aufgaben, Konzepttexte, Endspiele, Puzzle-Zuordnung). **D und E** bekommen Konzepttexte und Puzzle-/Linien-Zuordnung. Da die Puzzles nach Tags gezogen werden, sind sie damit ebenfalls spielbar. Der Einstufungstest entscheidet, wo du startest.
+Chess.com-Rating: **ca. 450** (Nachtrag vom 15.10.2026). Daraus folgt:
+- **Section A (Fundament) und B (Matt und Sicherheit)** sind die wichtigsten und vollständig befüllt (eigene Aufgaben, Konzepttexte, Endspiele, Puzzle-Zuordnung). C und D sind ebenfalls befüllt, E hat Standard-Linien als Fallback, F ist über Tags spielbar.
+- Startwert Taktik-Rating 600 (Lichess-Puzzle-Ratings liegen erfahrungsgemäss über Chess.com-Rapid), der Einstufungstest startet bei 450 + 150.
+- Der Einstufungstest bleibt optional – bei 450 ist der Pfad ab A1 sinnvoll; er überspringt nur, was sicher sitzt.
 
 ## 7. Bauschritte (je ein lauffähiger Commit)
 

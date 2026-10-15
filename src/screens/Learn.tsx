@@ -47,7 +47,7 @@ export function LearnScreen(props: { data: AppData; onStart: (p: SessionPlan) =>
         {!data.settings.placementDone && (
           <p class="small muted" style={{ margin: '0.75rem 0 0' }}>
             Grundlagen schon bekannt?{' '}
-            <a href="#" onClick={(e) => (e.preventDefault(), props.onStart(buildPlacement(ctx, data.settings.tacticsRating)))}>
+            <a href="#" onClick={(e) => (e.preventDefault(), props.onStart(buildPlacement(ctx, data.settings.chesscomRating ? data.settings.chesscomRating + 150 : data.settings.tacticsRating)))}>
               Einstufungstest machen
             </a>{' '}
             (ca. 6 Minuten)
