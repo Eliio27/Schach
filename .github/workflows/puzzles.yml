@@ -1,0 +1,53 @@
+name: Puzzle-Daten generieren
+
+# Lädt die Lichess-Puzzle-Datenbank (CC0), filtert sie mit scripts/build-puzzles.mjs
+# und committet public/data/puzzles.json in den Branch, auf dem der Lauf gestartet wurde.
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Anzahl Puzzles (5000–10000)'
+        default: '8000'
+  push:
+    paths:
+      - 'scripts/build-puzzles.mjs'
+      - 'scripts/puzzle-select.mjs'
+      - '.github/workflows/puzzles.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: puzzles-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lichess-Datenbank laden und filtern
+        env:
+          PUZZLE_TARGET: ${{ github.event.inputs.target || '8000' }}
+        run: |
+          set -o pipefail
+          curl -fsSL https://database.lichess.org/lichess_db_puzzle.csv.zst \
+            | zstd -dc \
+            | node scripts/build-puzzles.mjs public/data/puzzles.json
+      - name: Ergebnis committen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/puzzles.json
+          if git diff --cached --quiet; then
+            echo "Keine Änderungen."
+          else
+            git commit -m "Puzzle-Daten aus der Lichess-Datenbank neu generiert"
+            git push
+          fi
