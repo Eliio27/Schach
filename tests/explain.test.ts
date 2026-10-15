@@ -133,7 +133,7 @@ describe('explainMistake', () => {
       after: { cp: -120 },
     });
     expect(e.motifs).toEqual(['general']);
-    expect(e.text).toBe('Besser war e4 (+0.3). Dein Zug kostet etwa 1.5 Bauern.');
+    expect(e.text).toBe('Besser war e4 (+0.3). Der Zug kostet etwa 1.5 Bauern.');
   });
 });
 
@@ -151,5 +151,26 @@ describe('explainPuzzle', () => {
   it('mainTag bevorzugt spezifische Tags', () => {
     expect(mainTag(['mateIn2', 'smotheredMate'])).toBe('smotheredMate');
     expect(mainTag(['crushing'])).toBeNull();
+  });
+});
+
+import { explainRefutation } from '../src/analysis/explain';
+
+describe('explainRefutation', () => {
+  it('meldet sofortiges Matt', () => {
+    // Weiss spielt Dd5?? und Schwarz setzt mit Te1 matt
+    const before = '4r1k1/5ppp/8/8/8/8/5PPP/3Q2K1 w - - 0 1';
+    const after = '4r1k1/5ppp/8/3Q4/8/8/5PPP/6K1 b - - 1 1';
+    expect(explainRefutation(before, 'd1d5', after, ['e8e1'], { mate: -1 })).toBe('Danach setzt Schwarz sofort matt: Te1#.');
+  });
+  it('meldet Figurenverlust', () => {
+    const before = '4k3/8/8/4p3/8/8/8/2B1K3 w - - 0 1';
+    const after = '4k3/8/8/4p3/5B2/8/8/4K3 b - - 1 1';
+    expect(explainRefutation(before, 'c1f4', after, ['e5f4'], { cp: -300 })).toBe('Schwarz antwortet exf4 und schlägt den Läufer auf f4.');
+  });
+  it('erkennt „gut, aber nicht der beste"', () => {
+    const before = '4k3/8/8/8/8/8/8/3QK3 w - - 0 1';
+    const after = '4k3/8/8/8/8/8/3Q4/4K3 b - - 1 1';
+    expect(explainRefutation(before, 'd1d2', after, ['e8f7'], { cp: 900 })).toMatch(/^Nicht schlecht/);
   });
 });

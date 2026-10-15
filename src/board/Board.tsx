@@ -53,7 +53,8 @@ export function Board(props: BoardProps) {
   const orientation = props.orientation ?? 'w';
   const chess = useMemo(() => {
     try {
-      return new Chess(props.fen);
+      // skipValidation: auch Übungsstellungen ohne Könige darstellen
+      return new Chess(props.fen, { skipValidation: true });
     } catch {
       return new Chess();
     }

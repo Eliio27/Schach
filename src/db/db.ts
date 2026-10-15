@@ -154,7 +154,6 @@ export interface Settings {
   chesscomUser: string;
   lichessUser: string;
   showPlayedMove: boolean;
-  sound: boolean;
   placementDone: boolean;
   tacticsRating: number;
   tagRatings: Record<string, { r: number; n: number }>;
@@ -170,7 +169,6 @@ export const DEFAULT_SETTINGS: Settings = {
   chesscomUser: 'Elischa123',
   lichessUser: '',
   showPlayedMove: true,
-  sound: false,
   placementDone: false,
   tacticsRating: 800,
   tagRatings: {},

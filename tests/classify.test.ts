@@ -94,3 +94,26 @@ describe('formatScore', () => {
     expect(formatScore({ mate: -2 })).toBe('−#2');
   });
 });
+
+import { buildReport } from '../src/analysis/report';
+
+describe('buildReport', () => {
+  it('klassifiziert eine Mini-Partie mit Patzer (Narrenmatt)', () => {
+    const start = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+    const uci = ['f2f3', 'e7e5', 'g2g4', 'd8h4'];
+    const positions = [
+      { score: { cp: 30 }, best: 'e2e4', pv: ['e2e4'] },
+      { score: { cp: 0 }, best: 'e7e5', pv: ['e7e5'] },
+      { score: { cp: -60 }, best: 'b1c3', pv: ['b1c3'] },
+      { score: { mate: -1 }, best: 'd8h4', pv: ['d8h4'] },
+      { score: { cp: -10000 }, best: null, pv: [] },
+    ];
+    const r = buildReport(start, uci, positions);
+    expect(r.moves.map((m) => m.cls)).toEqual(['good', 'best', 'blunder', 'best']);
+    expect(r.moves[0]!.phase).toBe('opening');
+    expect(r.summary.counts.w.blunder).toBe(1);
+    expect(r.summary.accuracy.b).toBeGreaterThan(r.summary.accuracy.w!);
+    expect(r.summary.byPhase.opening.w).not.toBeNull();
+    expect(r.summary.byPhase.endgame.w).toBeNull();
+  });
+});

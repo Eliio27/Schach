@@ -221,7 +221,7 @@ export function explainMistake(x: MistakeInput): Explanation {
   if (!motifs.includes('mateAllowed') && !motifs.includes('mateMissed') && bestSan) {
     const lossPawns = Math.abs(scoreToCp(x.before) - scoreToCp(x.after)) / 100;
     const general = `Besser war ${sanDe(bestSan)} (${formatScore(x.before)}).`;
-    const cost = lossPawns >= 0.5 && lossPawns < 50 ? ` Dein Zug kostet etwa ${lossPawns.toFixed(1)} Bauern.` : '';
+    const cost = lossPawns >= 0.5 && lossPawns < 50 ? ` Der Zug kostet etwa ${lossPawns.toFixed(1)} Bauern.` : '';
     parts.push(general + cost);
   } else if (bestSan && !motifs.includes('mateMissed')) {
     parts.push(`Besser war ${sanDe(bestSan)}.`);
@@ -335,4 +335,34 @@ export function explainPuzzle(fen: string, solution: string[], tags: string[]): 
   const line = formatLine(fen, sanLine(fen, solution));
   if (line) parts.push(`Lösung: ${line}`);
   return { motifs: [], text: parts.join(' ') };
+}
+
+/**
+ * Kurzer Satz zur Widerlegung eines falschen Zuges in einer Aufgabe.
+ * @param fen Stellung NACH dem falschen Zug (Gegner am Zug)
+ * @param fenBefore Stellung vor dem falschen Zug (für die Materialbilanz)
+ * @param wrong der falsche Zug (UCI)
+ * @param pv beste Antwort des Gegners und Fortsetzung
+ * @param score Bewertung nach dem falschen Zug (Weiss-Sicht)
+ */
+export function explainRefutation(fenBefore: string, wrong: string, fen: string, pv: string[], score: Score): string {
+  const c = new Chess(fen);
+  const opp = c.turn();
+  const me = opp === 'w' ? 'b' : 'w';
+  const reply = pv[0] ? tryMove(new Chess(fen), pv[0]) : null;
+  if (!reply) return 'Das ist nicht der gesuchte Zug.';
+  const replySan = sanDe(reply.san);
+  const oppMate = score.mate !== undefined ? score.mate * (opp === 'w' ? 1 : -1) : undefined;
+  if (reply.san.endsWith('#')) return `Danach setzt ${colorName(opp)} sofort matt: ${replySan}.`;
+  if (oppMate !== undefined && oppMate > 0 && oppMate <= 4) {
+    return `Danach setzt ${colorName(opp)} in ${oppMate} Zügen matt, beginnend mit ${replySan}.`;
+  }
+  const loss = -materialGain(fenBefore, [wrong, ...pv], me, 7);
+  if (reply.captured && loss >= 2) {
+    return `${colorName(opp)} antwortet ${replySan} und schlägt ${NAME_DE_AKK[reply.captured]} auf ${reply.to}.`;
+  }
+  if (loss >= 2) return `${colorName(opp)} antwortet ${replySan} – danach verlierst du Material.`;
+  const myCp = scoreToCp(score) * (me === 'w' ? 1 : -1);
+  if (myCp >= 150) return `Nicht schlecht – aber es gibt einen stärkeren Zug. ${colorName(opp)} antwortet ${replySan}.`;
+  return `${colorName(opp)} antwortet ${replySan} (${formatScore(score)}).`;
 }

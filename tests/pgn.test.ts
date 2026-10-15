@@ -93,3 +93,14 @@ describe('gameId / myColor', () => {
     expect(myColor(parseGame(LICHESS), ['jemand'])).toBeNull();
   });
 });
+
+import { readFileSync } from 'node:fs';
+
+describe('lange Partie', () => {
+  it('liest Kasparov–Topalov (44 Züge, Rochade lang, Schachs)', () => {
+    const g = parseGame(readFileSync(new URL('./e2e/kasparov-topalov.pgn', import.meta.url), 'utf8'));
+    expect(g.san).toHaveLength(87);
+    expect(g.san[20]).toBe('O-O-O');
+    expect(g.result).toBe('1-0');
+  });
+});

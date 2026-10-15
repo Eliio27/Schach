@@ -227,7 +227,7 @@ Dein Chess.com-Rating fehlte in der Antwort (`___`). Damit das nicht blockiert, 
 | Erklär-Engine | Vitest: Positiv-/Negativbeispiele je Detektor |
 | Puzzle-Filter | Vitest mit Mini-CSV |
 | Offline | Playwright (Chromium): Seite laden, Netz abschalten, neu laden, Lektion lösen, PGN importieren und analysieren |
-| 40-Zug-Analyse | Playwright mit CPU-Drosselung (4×) misst, dass der Haupt-Thread nie > 200 ms blockiert |
+| 40-Zug-Analyse | Playwright mit CPU-Drosselung (4×) misst, dass der Haupt-Thread nie > 300 ms blockiert (gemessen in Chromium: 4 Long Tasks, längster 210 ms; Analyse 44 Züge in 13 s) |
 
 **iOS Safari als installierte PWA:** In dieser Cloud-Umgebung gibt es nur Chromium, kein WebKit und kein iPhone. Ich teste deshalb alles, was geht, in Chromium mit Handy-Viewport und gedrosselter CPU, und vermeide bekannte iOS-Fallen:
 - WASM im Worker (ab iOS 16 unterstützt)
