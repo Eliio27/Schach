@@ -3,7 +3,10 @@ import preact from '@preact/preset-vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { dirname, join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = dirname(fileURLToPath(import.meta.url));
 
 /** Schreibt dist/sw.js mit der Liste aller Dateien und einem Inhalts-Hash als Cache-Version. */
 function serviceWorker(): Plugin {
@@ -11,7 +14,7 @@ function serviceWorker(): Plugin {
     name: 'zugzwang-sw',
     apply: 'build',
     closeBundle() {
-      const dist = join(__dirname, 'dist');
+      const dist = join(root, 'dist');
       const files: string[] = [];
       const walk = (dir: string) => {
         for (const f of readdirSync(dir)) {
@@ -25,7 +28,7 @@ function serviceWorker(): Plugin {
       const hash = createHash('sha256');
       for (const f of assets) hash.update(f).update(readFileSync(join(dist, f)));
       const version = hash.digest('hex').slice(0, 12);
-      const template = readFileSync(join(__dirname, 'src', 'sw-template.js'), 'utf8');
+      const template = readFileSync(join(root, 'src', 'sw-template.js'), 'utf8');
       const sw = template
         .replace('__VERSION__', version)
         .replace('__ASSETS__', JSON.stringify(['./', ...assets.filter((f) => f !== 'index.html')], null, 0));

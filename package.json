@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.2",
+    "@types/node": "^22.20.5",
     "fake-indexeddb": "^6.0.1",
     "playwright-core": "^1.55.0",
     "typescript": "^5.8.3",
